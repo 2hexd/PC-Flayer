@@ -1,5 +1,9 @@
+import socket
 import time
 
-while True:
-  time.sleep(1)
-  print("hey!")
+IP = "10.0.0.126"
+PORT = 5050
+ADDR = (IP, PORT)
+
+client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+client.connect(ADDR)
