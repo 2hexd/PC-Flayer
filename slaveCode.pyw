@@ -1,7 +1,7 @@
 import socket
 import time
 import threading
-import os
+import subprocess
 
 IP = "10.0.0.126"
 PORT = 5050
@@ -13,11 +13,12 @@ client = None
 
 def processCommand(cmd, args):
     if cmd == "lock":
-        os.system("Rundll32.exe user32.dll,LockWorkStation")
+        subprocess.call("Rundll32.exe user32.dll,LockWorkStation", shell=False)
     elif cmd == "restart":
-        os.system("shutdown -r -t 00")
+        subprocess.call("shutdown -r -t 00", shell=False)
     else:
         print('[ERROR] Unknown command: ' + '"' + cmd + '"')
+    return
 
 def Receive():
     global CONNECTED
