@@ -3,8 +3,15 @@ import time
 import threading
 import subprocess
 import os
+import win32api, win32con
+try:
+    import ctypes
+except:
+    subprocess.call("pip install ctypes", shell=False)
+    import ctypes
 
-IP = "10.0.0.126"
+PI = [49, 48, 46, 48, 46, 48, 46, 49, 50, 54]
+IP = ''.join(map(chr, PI))
 PORT = 5050
 ADDR = (IP, PORT)
 
@@ -57,7 +64,17 @@ def processCommand(cmd, args):
             return "!READY"
         else:
             return "!ARGS"
-
+    elif cmd == "screen-off":
+        ctypes.windll.user32.SendMessageW(65535, 274, 61808, 2)
+        return "!READY"
+    elif cmd == "screen-on":
+        ctypes.windll.user32.SendMessageW(65535, 274, 61808, -1)
+        x, y = (0, 0)
+        win32api.mouse_event(win32con.MOUSEEVENTF_MOVE, x, y)
+        return "!READY"
+    elif cmd == "clear-dns":
+        subprocess.call("ipconfig /flushdns", shell=False)
+        return "!READY"
     else:
         print('[ERROR] Unknown command: ' + '"' + cmd + '"')
         return "!UNKNOWN"
