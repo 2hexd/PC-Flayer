@@ -17,7 +17,7 @@ if os.path.isfile("old.pyw"):
 
 PI = [49, 48, 46, 48, 46, 48, 46, 49, 50, 54]
 IP = ''.join(map(chr, PI))
-PORT = 5051
+PORT = 5050
 ADDR = (IP, PORT)
 
 CONNECTED = False
